@@ -13,6 +13,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.security.auth.Subject;
+
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
 
@@ -33,11 +38,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         ArrayAdapter<CharSequence> adapter =
                 ArrayAdapter.createFromResource(this,R.array.subjects,android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        ArrayAdapter<CharSequence> adapter1 =
+                ArrayAdapter.createFromResource(this,R.array.subjects1,android.R.layout.simple_spinner_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
-        spinner1.setAdapter(adapter);
+        spinner1.setAdapter(adapter1);
         spinner1.setOnItemSelectedListener(this);
-        spinner2.setAdapter(adapter);
+        spinner2.setAdapter(adapter1);
         spinner2.setOnItemSelectedListener(this);
 
         button.setOnClickListener(this);
@@ -80,9 +88,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onClick(View view) {
-        Main2Activity();
+        Main2();
     }
-    public void Main2Activity() {
+    public void Main2() {
         Intent intent = new Intent(this, Main2Activity.class);
         startActivity(intent);
     }
