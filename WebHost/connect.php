@@ -1,5 +1,8 @@
 <?php
-  define ( 'DB_HOST','localhost' );
-  define ( 'DB_USER','id12338909_electiveamrita' );
-  define ( 'DB_PASSWORD','elective' );
+  require_once "constants.php";
+
+  $con = new mysqli(DB_HOST, DB_USER, DB_PASSWORD);
+  
+
+
 ?>
