@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/materiallogindemo.iml" filepath="$PROJECT_DIR$/materiallogindemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AuthenticatorApp.iml" filepath="$PROJECT_DIR$/AuthenticatorApp.iml" group="AuthenticatorApp" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="AuthenticatorApp/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/firebase-authentication-android3.iml" filepath="$PROJECT_DIR$/.idea/firebase-authentication-android3.iml" />
     </modules>
   </component>
 </project>
