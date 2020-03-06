@@ -18,7 +18,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class Login extends AppCompatActivity implements View.OnClickListener {
+public class LoginStudent extends AppCompatActivity implements View.OnClickListener {
     EditText mEmail,mPassword;
     Button mLoginBtn,mLoginBtn2;
     TextView mCreateBtn;
@@ -28,7 +28,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_login_student);
 
         Bundle bundle;
         bundle = getIntent().getExtras();
@@ -71,10 +71,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            Toast.makeText(Login.this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginStudent.this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(getApplicationContext(),MainActivity.class));
                         }else {
-                            Toast.makeText(Login.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginStudent.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             progressBar.setVisibility(View.GONE);
                         }
 
@@ -83,10 +83,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
             }
         });
-
         mLoginBtn2.setOnClickListener(this);
-
-
 
         mCreateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +97,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent(this, LoginStudent.class);
+        Intent intent = new Intent(this, Login.class);
         startActivity(intent);
     }
 }
