@@ -1,11 +1,13 @@
 <resources>
-    <string name="app_name">AuthenticatorApp</string>
     <array name="subjects">
-        <item>Android Development</item>
+        <item>Internet Of Things</item>
         <item>Cryptography</item>
+        <item>Android Development</item>
         <item>Neural Networks</item>
         <item>Cloud Computing</item>
         <item>Biometrics</item>
         <item>Game Theory</item>
+        <item>Principles of Machine Learning</item>
     </array>
+    <string name="app_name">AuthenticatorApp</string>
 </resources>

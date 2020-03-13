@@ -20,6 +20,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -28,13 +30,16 @@ import java.util.Map;
 
 public class Register extends AppCompatActivity {
     public static final String TAG = "TAG";
-    EditText mFullName,mEmail,mPassword,mPhone;
+    EditText mPref;
+    EditText mFullName,mEmail,mPassword,mID;
     Button mRegisterBtn;
     TextView mLoginBtn,mLoginBtn2;
     FirebaseAuth fAuth;
     ProgressBar progressBar;
     FirebaseFirestore fStore;
     String userID;
+    DatabaseReference databaseUsers;
+    int i=5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +47,10 @@ public class Register extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         mFullName   = findViewById(R.id.fullName);
+        mPref = findViewById(R.id.Preference);
         mEmail      = findViewById(R.id.Email);
         mPassword   = findViewById(R.id.password);
-        mPhone      = findViewById(R.id.phone);
+        mID      = findViewById(R.id.ID);
         mRegisterBtn= findViewById(R.id.registerBtn);
         mLoginBtn   = findViewById(R.id.createText);
         mLoginBtn2   = findViewById(R.id.createText2);
@@ -52,6 +58,9 @@ public class Register extends AppCompatActivity {
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
         progressBar = findViewById(R.id.progressBar);
+
+        databaseUsers = FirebaseDatabase.getInstance().getReference("2/data/faculties/6");
+
 
         if(fAuth.getCurrentUser() != null){
             startActivity(new Intent(getApplicationContext(),MainActivity.class));
@@ -62,10 +71,12 @@ public class Register extends AppCompatActivity {
         mRegisterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                addUser();
                 final String email = mEmail.getText().toString().trim();
+                final String pref = mPref.getText().toString().trim();
                 String password = mPassword.getText().toString().trim();
                 final String fullName = mFullName.getText().toString();
-                final String phone    = mPhone.getText().toString();
+                final String id    = mID.getText().toString();
 
                 if(TextUtils.isEmpty(email)){
                     mEmail.setError("Email is Required.");
@@ -96,7 +107,9 @@ public class Register extends AppCompatActivity {
                             Map<String,Object> user = new HashMap<>();
                             user.put("fName",fullName);
                             user.put("email",email);
-                            user.put("phone",phone);
+                            user.put("id",id);
+                            user.put("preference",pref);
+
                             documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
@@ -116,6 +129,24 @@ public class Register extends AppCompatActivity {
                         }
                     }
                 });
+            }
+
+            private void addUser() {
+                String email = mEmail.getText().toString().trim();
+                String id = mID.getText().toString().trim();
+                String name = mFullName.getText().toString().trim();
+                String pref = mPref.getText().toString().trim();
+
+                if(!TextUtils.isEmpty(name)||!TextUtils.isEmpty(id))
+                {
+                    AddFaculty addFaculty = new AddFaculty(id,name,email,pref);
+                    databaseUsers.setValue(addFaculty);
+                    Toast.makeText(Register.this,"User Added",Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    Toast.makeText(Register.this, "You Should Enter the Name or ID", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

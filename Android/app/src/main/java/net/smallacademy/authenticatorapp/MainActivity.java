@@ -24,20 +24,26 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Nullable;
 
 public class MainActivity extends AppCompatActivity {
-    TextView fullName,email,phone;
+    TextView fullName,email;
     FirebaseAuth fAuth;
     FirebaseFirestore fStore;
     String userId;
 
     Button add;
-    Spinner pref1,pref2,pref3;
+    Spinner pref1;
 
     FirebaseDatabase database;
     DatabaseReference databasePreferences;
     DatabaseReference myRef;
+    DatabaseReference databaseReference;
+
+    List<String> subjects;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
         email    = findViewById(R.id.profileEmail);
         add = findViewById(R.id.button2);
         pref1 = findViewById(R.id.spinner);
-        pref2 = findViewById(R.id.spinner2);
-        pref3 = findViewById(R.id.spinner3);
+
+        subjects = new ArrayList<>();
 
 //        readname();
         add.setOnClickListener(new View.OnClickListener() {
@@ -57,8 +63,6 @@ public class MainActivity extends AppCompatActivity {
               checkpref();
             }
         });
-
-        databasePreferences = FirebaseDatabase.getInstance().getReference("data/faculties/preference");
 
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
@@ -69,14 +73,16 @@ public class MainActivity extends AppCompatActivity {
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                phone.setText(documentSnapshot.getString("phone"));
-                fullName.setText(documentSnapshot.getString("fName"));
-                email.setText(documentSnapshot.getString("email"));
+//                fullName.setText(documentSnapshot.getString("fName"));
+//                email.setText(documentSnapshot.getString("email"));
             }
         });
 
 
+        databasePreferences = database.getInstance().getReference("2/data/faculties/4/");
+
     }
+
 
 //    public void readname()
 //    {
@@ -99,15 +105,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkpref()
     {
-        String preference1 = pref1.getSelectedItem().toString();
-        String preference2 = pref2.getSelectedItem().toString();
-        String preference3 = pref3.getSelectedItem().toString();
 
-        if(!TextUtils.isEmpty(preference1) || !TextUtils.isEmpty(preference2) || !TextUtils.isEmpty(preference3))
+        String pref1 = this.pref1.getSelectedItem().toString();
+
+        if(!TextUtils.isEmpty(pref1))
         {
-            String id = databasePreferences.push().getKey();
-            Preferences Preferences = new Preferences(preference1,preference2,preference3);
-            databasePreferences.child(id).setValue(Preferences);
+            AddFaculty addFaculty = new AddFaculty(pref1);
+            //Preferences Preferences = new Preferences(pref1);
+            databasePreferences.setValue(addFaculty);
 
             Toast.makeText(this,"Preferences Added",Toast.LENGTH_LONG).show();
         }
