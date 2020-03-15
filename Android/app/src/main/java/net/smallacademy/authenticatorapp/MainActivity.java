@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        databasePreferences = database.getInstance().getReference("2/data/faculties/4/");
+        databasePreferences = database.getInstance().getReference("2/data/faculties/6");
 
     }
 
@@ -110,9 +110,9 @@ public class MainActivity extends AppCompatActivity {
 
         if(!TextUtils.isEmpty(pref1))
         {
-            AddFaculty addFaculty = new AddFaculty(pref1);
-            //Preferences Preferences = new Preferences(pref1);
-            databasePreferences.setValue(addFaculty);
+//            AddFaculty addFaculty = new AddFaculty(id,name,email,pref1);
+            Preferences Preferences = new Preferences(pref1);
+            databasePreferences.setValue(Preferences);
 
             Toast.makeText(this,"Preferences Added",Toast.LENGTH_LONG).show();
         }

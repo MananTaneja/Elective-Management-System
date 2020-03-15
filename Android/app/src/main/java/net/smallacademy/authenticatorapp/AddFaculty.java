@@ -6,7 +6,7 @@ public class AddFaculty {
     String email;
     String preference;
 
-    public AddFaculty(String pref1)
+    public AddFaculty(String roll, String name, String email, String pref1, String pref2, String pref3)
     {
 
     }
