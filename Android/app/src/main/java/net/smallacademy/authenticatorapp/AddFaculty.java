@@ -6,8 +6,7 @@ public class AddFaculty {
     String email;
     String preference;
 
-    public AddFaculty(String roll, String name, String email, String pref1, String pref2, String pref3)
-    {
+    public AddFaculty() {
 
     }
 
@@ -22,15 +21,31 @@ public class AddFaculty {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
         return email;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getPreference() {
         return preference;
+    }
+
+    public void setPreference(String preference) {
+        this.preference = preference;
     }
 }

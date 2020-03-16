@@ -20,8 +20,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -39,6 +42,9 @@ public class RegisterStudent extends AppCompatActivity implements View.OnClickLi
     FirebaseFirestore fStore;
     String userID;
     DatabaseReference databaseUsers;
+
+    String curuserid;
+    int countid = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +67,20 @@ public class RegisterStudent extends AppCompatActivity implements View.OnClickLi
         fStore = FirebaseFirestore.getInstance();
         progressBar = findViewById(R.id.progressBar);
 
-        databaseUsers = FirebaseDatabase.getInstance().getReference("3/data/students/20");
+        databaseUsers = FirebaseDatabase.getInstance().getReference("3").child("data").child("students");
+
+        databaseUsers.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                countid = (int) dataSnapshot.getChildrenCount();
+                curuserid = String.valueOf(countid);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
 
         if(fAuth.getCurrentUser() != null){
@@ -144,11 +163,12 @@ public class RegisterStudent extends AppCompatActivity implements View.OnClickLi
                 String pref2 = mPref2.getText().toString().trim();
                 String pref3 = mPref3.getText().toString().trim();
                 String roll = mRoll.getText().toString().trim();
+                String curid = curuserid;
 
                 if(!TextUtils.isEmpty(name)||!TextUtils.isEmpty(roll))
                 {
                     AddStudent addStudent = new AddStudent(roll,name,email,pref1,pref2,pref3);
-                    databaseUsers.setValue(addStudent);
+                    databaseUsers.child(curid).setValue(addStudent);
                     Toast.makeText(RegisterStudent.this,"User Added",Toast.LENGTH_SHORT).show();
                 }
                 else

@@ -1,5 +1,6 @@
 package net.smallacademy.authenticatorapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -30,37 +31,44 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 public class MainActivity extends AppCompatActivity {
-    TextView fullName,email;
+    TextView fullName, email1;
     FirebaseAuth fAuth;
     FirebaseFirestore fStore;
     String userId;
 
-    Button add;
+    Button add, curprefbutton;
     Spinner pref1;
+
+    TextView curpref;
 
     FirebaseDatabase database;
     DatabaseReference databasePreferences;
-    DatabaseReference myRef;
+    DatabaseReference Ref;
     DatabaseReference databaseReference;
 
-    List<String> subjects;
+    AddFaculty addFaculty = new AddFaculty();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         fullName = findViewById(R.id.profileName);
-        email    = findViewById(R.id.profileEmail);
+        email1 = findViewById(R.id.profileEmail);
         add = findViewById(R.id.button2);
         pref1 = findViewById(R.id.spinner);
+        curpref = findViewById(R.id.textView10);
+        curprefbutton = findViewById(R.id.button3);
 
-        subjects = new ArrayList<>();
+        addFaculty = new AddFaculty();
+
+//        databaseReference = FirebaseDatabase.getInstance().getReference().child("2").child("data").child("faculties");
+
 
 //        readname();
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              checkpref();
+                update();
             }
         });
 
@@ -68,6 +76,43 @@ public class MainActivity extends AppCompatActivity {
         fStore = FirebaseFirestore.getInstance();
 
         userId = fAuth.getCurrentUser().getUid();
+
+        Ref = FirebaseDatabase.getInstance().getReference("2");
+
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("2").child("data").child("faculties").child("7");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String name = dataSnapshot.child("name").getValue().toString();
+                String email = dataSnapshot.child("email").getValue().toString();
+                fullName.setText(name);
+                email1.setText(email);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        curprefbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                databaseReference = FirebaseDatabase.getInstance().getReference().child("2").child("data").child("faculties").child("7");
+                databaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String pref = dataSnapshot.child("preference").getValue().toString();
+                        curpref.setText(pref);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        });
 
         DocumentReference documentReference = fStore.collection("users").document(userId);
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
@@ -79,8 +124,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        databasePreferences = database.getInstance().getReference("2/data/faculties/6");
-
+//        databasePreferences = database.getInstance().getReference("2/data/faculties/6");
     }
 
 
@@ -103,28 +147,46 @@ public class MainActivity extends AppCompatActivity {
 //        });
 //    }
 
-    private void checkpref()
-    {
-
+    private void checkpref() {
         String pref1 = this.pref1.getSelectedItem().toString();
 
-        if(!TextUtils.isEmpty(pref1))
-        {
+        if (!TextUtils.isEmpty(pref1)) {
 //            AddFaculty addFaculty = new AddFaculty(id,name,email,pref1);
-            Preferences Preferences = new Preferences(pref1);
-            databasePreferences.setValue(Preferences);
+//            databasePreferences.setValue(addFaculty);
+//            Preferences Preferences = new Preferences(pref1);
+//            databasePreferences.setValue(Preferences);
+            addFaculty.setPreference(pref1);
+            databaseReference.child("7").setValue(addFaculty);
 
-            Toast.makeText(this,"Preferences Added",Toast.LENGTH_LONG).show();
-        }
-        else
-        {
+            Toast.makeText(this, "Preferences Added", Toast.LENGTH_LONG).show();
+        } else {
             Toast.makeText(this, "You should enter all the preferences", Toast.LENGTH_LONG).show();
         }
     }
 
     public void logout(View view) {
         FirebaseAuth.getInstance().signOut();//logout
-        startActivity(new Intent(getApplicationContext(),Login.class));
+        startActivity(new Intent(getApplicationContext(), Login.class));
         finish();
     }
+
+    public void update() {
+        if (isPrefChanged()) {
+            Toast.makeText(this,"Preference added/changed",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean isPrefChanged() {
+        String pref = this.pref1.getSelectedItem().toString();
+        if(!pref1.equals(pref))
+        {
+            Ref.child("data").child("faculties").child("7").child("preference").setValue(pref);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
 }

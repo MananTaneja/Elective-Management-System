@@ -5,8 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -32,7 +30,7 @@ import java.util.ArrayList;
 import javax.annotation.Nullable;
 
 public class Student_main extends AppCompatActivity {
-    TextView fullName,email;
+    TextView fullName,email1,curpref1,curpref2,curpref3;
     FirebaseAuth fAuth;
     FirebaseFirestore fStore;
     String userId;
@@ -41,7 +39,7 @@ public class Student_main extends AppCompatActivity {
 
     ListView listview;
 
-    Button add;
+    Button add,curprefbutton;
 
     FirebaseDatabase database;
     DatabaseReference ref;
@@ -50,6 +48,11 @@ public class Student_main extends AppCompatActivity {
 
     DatabaseReference databasePreferences;
     DatabaseReference myRef;
+    DatabaseReference databaseReference;
+    DatabaseReference Ref;
+
+    String curuserid;
+    int countid = 0;
 
 
     @Override
@@ -57,12 +60,77 @@ public class Student_main extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_main);
         fullName = findViewById(R.id.profileName1);
-        email    = findViewById(R.id.profileEmail1);
+        email1    = findViewById(R.id.profileEmail2);
         add = findViewById(R.id.button2);
-//        listview = findViewById(R.id.ListView);
+        curprefbutton = findViewById(R.id.button5);
+        curpref1 = findViewById(R.id.textView12);
+        curpref2 = findViewById(R.id.textView13);
+        curpref3 = findViewById(R.id.textView14);
+
+        Ref = FirebaseDatabase.getInstance().getReference("3");
 
         database = FirebaseDatabase.getInstance();
-        ref = database.getReference("3/data/students");
+
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("3").child("data").child("students").child("21");
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                countid = (int) dataSnapshot.getChildrenCount();
+                curuserid = String.valueOf(countid);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String name = dataSnapshot.child("name").getValue().toString();
+                String email = dataSnapshot.child("email").getValue().toString();
+                fullName.setText(name);
+                email1.setText(email);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                update();
+            }
+        });
+
+        curprefbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String curid = curuserid;
+                databaseReference = FirebaseDatabase.getInstance().getReference().child("3").child("data").child("students").child("21");
+                databaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String pref1 = dataSnapshot.child("pref1").getValue().toString();
+                        String pref2 = dataSnapshot.child("pref2").getValue().toString();
+                        String pref3 = dataSnapshot.child("pref3").getValue().toString();
+                        curpref1.setText(pref1);
+                        curpref2.setText(pref2);
+                        curpref3.setText(pref3);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        });
 //        list = new ArrayList<>();
 //        adapter = new ArrayAdapter<students>(this,R.layout.student_info,R.layout.)
 //        ref.addValueEventListener(new ValueEventListener() {
@@ -85,12 +153,6 @@ public class Student_main extends AppCompatActivity {
         pref3 = findViewById(R.id.spinner3);
 
 //        readname();
-        add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkprefforstudent();
-            }
-        });
 
         databasePreferences = FirebaseDatabase.getInstance().getReference("data/students/preference");
 
@@ -108,7 +170,7 @@ public class Student_main extends AppCompatActivity {
             }
         });
 
-        databasePreferences = database.getInstance().getReference("3/data/students/0");
+        databasePreferences = database.getInstance().getReference("3/data/students/21");
 
     }
 
@@ -131,25 +193,31 @@ public class Student_main extends AppCompatActivity {
 //        });
 //    }
 
-    private void checkprefforstudent()
-    {
-        String pref1 = this.pref1.getSelectedItem().toString();
-        String pref2 = this.pref2.getSelectedItem().toString();
-        String pref3 = this.pref3.getSelectedItem().toString();
+        public void update() {
+        if (isPref1Changed()) {
+            Toast.makeText(this,"Preferences added/changed",Toast.LENGTH_SHORT).show();
+        }
+    }
 
-        if(!TextUtils.isEmpty(pref1) || !TextUtils.isEmpty(pref2) || !TextUtils.isEmpty(pref3))
+
+    private boolean isPref1Changed() {
+        String pref = this.pref1.getSelectedItem().toString();
+        String prefe = this.pref2.getSelectedItem().toString();
+        String prefer = this.pref3.getSelectedItem().toString();
+        String curid = curuserid;
+        if(!pref1.equals(pref))
         {
-            String id = databasePreferences.push().getKey();
-            PrefStudent Preferences = new PrefStudent(pref1,pref2,pref3);
-            databasePreferences.child(id).setValue(Preferences);
-
-            Toast.makeText(this,"Preferences Added",Toast.LENGTH_LONG).show();
+            Ref.child("data").child("students").child("21").child("pref1").setValue(pref);
+            Ref.child("data").child("students").child("21").child("pref2").setValue(prefe);
+            Ref.child("data").child("students").child("21").child("pref3").setValue(prefer);
+            return true;
         }
         else
         {
-            Toast.makeText(this, "You should enter all the preferences", Toast.LENGTH_LONG).show();
+            return false;
         }
     }
+
 
     public void logout(View view) {
         FirebaseAuth.getInstance().signOut();//logout
