@@ -48,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
 
     AddFaculty addFaculty = new AddFaculty();
 
+//    String class;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         curpref = findViewById(R.id.textView10);
         curprefbutton = findViewById(R.id.button3);
 
-        addFaculty = new AddFaculty();
+        AddFaculty addFaculty = new AddFaculty();
 
 //        databaseReference = FirebaseDatabase.getInstance().getReference().child("2").child("data").child("faculties");
 
